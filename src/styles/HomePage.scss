@@ -1,0 +1,16 @@
+@import "./variables";
+@import "./mixins";
+
+.home-page {
+  text-align: center;
+  margin-top: 5rem;
+
+  h1 {
+    font-size: 3rem;
+    @include neon-glow($neon-blue);
+  }
+
+  p {
+    font-size: 1.2rem;
+  }
+}

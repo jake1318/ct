@@ -1,0 +1,34 @@
+@import "./variables";
+@import "./mixins";
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: darken($bg-color, 5%);
+  padding: 1rem 2rem;
+  border-bottom: 1px solid $neon-blue;
+
+  .navbar__logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    @include neon-glow($neon-pink);
+  }
+
+  .navbar__links a {
+    margin-right: 1rem;
+    font-size: 1rem;
+
+    &.active {
+      @include neon-glow($neon-blue);
+    }
+
+    &:hover {
+      @include neon-glow($neon-blue);
+    }
+  }
+
+  .navbar__wallet button {
+    @include neon-glow($neon-blue);
+  }
+}

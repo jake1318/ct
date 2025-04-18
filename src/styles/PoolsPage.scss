@@ -1,0 +1,62 @@
+@import "./variables";
+@import "./mixins";
+
+.pools-page {
+  h1 {
+    @include neon-glow($neon-pink);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+
+    th,
+    td {
+      padding: 0.75rem;
+      border: 1px solid darken($bg-color, 10%);
+    }
+
+    th {
+      background: darken($bg-color, 8%);
+    }
+
+    tr:hover {
+      background: rgba($neon-blue, 0.1);
+    }
+
+    input {
+      width: 5rem;
+      padding: 0.25rem;
+      margin-right: 0.5rem;
+      background: darken($bg-color, 5%);
+      border: 1px solid $neon-blue;
+      border-radius: 4px;
+      color: $text-color;
+    }
+
+    button {
+      background: transparent;
+      border: 1px solid $neon-pink;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      color: $neon-pink;
+      cursor: pointer;
+      @include neon-glow($neon-pink);
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      &:hover:not(:disabled) {
+        box-shadow: 0 0 10px $neon-pink;
+      }
+    }
+
+    .pos-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+  }
+}

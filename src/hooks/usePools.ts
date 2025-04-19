@@ -46,6 +46,8 @@ export default function usePools(filterIds?: string[]) {
         const json = await resp.json();
         const list: any[] = json.data?.lp_list || [];
 
+        console.log("API response data:", json.data);
+
         // build a lookup map keyed by normalized address
         const statsMap: Record<
           string,
@@ -68,31 +70,49 @@ export default function usePools(filterIds?: string[]) {
           };
         });
 
+        console.log("Stats map built:", statsMap);
+
+        // Log all pool addresses to check for matches
+        raw.forEach((p: any) => {
+          const key = normalizeAddress(p.poolAddress);
+          console.log(
+            `Pool ${key} exists in stats: ${!!statsMap[key]}`,
+            statsMap[key]
+              ? `with data: ${JSON.stringify(statsMap[key])}`
+              : "no data"
+          );
+        });
+
         // 3) merge on‑chain + off‑chain
         const mapped: PoolInfo[] = raw.map((p: any) => {
           const key = normalizeAddress(p.poolAddress);
-          const s = statsMap[key];
-          if (!s) {
-            // if something really isn't in the stats map, throw
-            throw new Error(`Missing stats for pool ${key}`);
-          }
+          const stats = statsMap[key];
+
+          // Extract token symbols
+          const tokenASymbol = p.coinTypeA.split("::").pop()!;
+          const tokenBSymbol = p.coinTypeB.split("::").pop()!;
+
+          // Calculate fee rate from basis points
+          const feeRate = Number(p.fee_rate) / 100;
+
           return {
             poolAddress: p.poolAddress,
             coinTypeA: p.coinTypeA,
             coinTypeB: p.coinTypeB,
-            tokenA: { symbol: p.coinTypeA.split("::").pop()! },
-            tokenB: { symbol: p.coinTypeB.split("::").pop()! },
-            feeRate: Number(p.fee_rate) / 100, // 2500 → 25%
-            liquidityUsd: s.liquidityUsd,
-            volume24hUsd: s.volume24hUsd,
-            fees24hUsd: s.fees24hUsd,
-            apr24h: s.apr24h,
+            tokenA: { symbol: tokenASymbol },
+            tokenB: { symbol: tokenBSymbol },
+            feeRate: feeRate,
+            liquidityUsd: stats?.liquidityUsd || 0,
+            volume24hUsd: stats?.volume24hUsd || 0,
+            fees24hUsd: stats?.fees24hUsd || 0,
+            apr24h: stats?.apr24h || 0,
           };
         });
 
         console.log("mappedPools:", mapped);
         if (!canceled) setPools(mapped);
       } catch (e: any) {
+        console.error("Error processing pool data:", e);
         if (!canceled) setError(e);
       } finally {
         if (!canceled) setLoading(false);

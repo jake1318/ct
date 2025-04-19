@@ -1,3 +1,5 @@
+// src/hooks/useUserPositions.ts
+
 import { useState, useEffect } from "react";
 import { useWallet } from "@suiet/wallet-kit";
 import cetusClmmSDK from "../services/cetusSdk";
@@ -34,7 +36,7 @@ export default function useUserPositions(pools: { poolAddress: string }[]) {
               pos.rewarder_amount_vector?.reduce(
                 (sum: number, r: any) => sum + parseFloat(r.amount_owed),
                 0
-              ) ?? 0;
+              ) || 0;
             return { positionId: pos.pos_object_id, pendingRewards: total };
           });
         }
